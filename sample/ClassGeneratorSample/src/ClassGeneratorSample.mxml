@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" width="955" height="600" minWidth="955" minHeight="600">
+	<fx:Declarations>
+		<s:DateTimeFormatter id="formatter" dateTimePattern="yyyy/MM/dd (E) HH:mm:ss" locale="ja_JP" />
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import me.rkome.da.utils.metadata.mapping.ClassGenerator;
+			
+			import mx.controls.Alert;
+			
+			import sample.models.TwitterUser;
+			
+			[Bindable]
+			private var user:TwitterUser = null;
+			
+			[Bindable]
+			private var isRequesting:Boolean = false;
+			
+			private function viewButtonClickHandler(evt:MouseEvent):void
+			{
+				var loader:URLLoader = new URLLoader();
+				loader.addEventListener(Event.COMPLETE, onReceive);
+				loader.addEventListener(IOErrorEvent.IO_ERROR, onError);
+				loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onError);
+				loader.load(new URLRequest("https://api.twitter.com/1/users/show/" + twitterId.text + ".json"));
+				isRequesting = true;
+			}
+			
+			private function onReceive(evt:Event):void
+			{
+				var loader:URLLoader = evt.currentTarget as URLLoader;
+				loader.removeEventListener(Event.COMPLETE, onReceive);
+				loader.removeEventListener(IOErrorEvent.IO_ERROR, onError);
+				loader.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onError);
+				
+				var json:Object = JSON.parse(String(loader.data));
+				if (json.hasOwnProperty("errors"))
+				{
+					Alert.show(json.errors[0].message, json.errors[0].code);
+				}
+				else
+				{
+					user = ClassGenerator.generate(TwitterUser, json) as TwitterUser;
+				}
+				isRequesting = false;
+			}
+			private function onError(evt:Event):void
+			{
+				var loader:URLLoader = evt.currentTarget as URLLoader;
+				loader.removeEventListener(Event.COMPLETE, onReceive);
+				loader.removeEventListener(IOErrorEvent.IO_ERROR, onError);
+				loader.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onError);
+				
+				Alert.show(evt.toString(), "Error");
+				isRequesting = false;
+				
+				twitterId.text = "";
+			}
+			
+		]]>
+	</fx:Script>
+	<s:HGroup top="10" horizontalCenter="0" verticalAlign="middle">
+		<s:Label text="Twitter ID"/>
+		<s:TextInput id="twitterId" width="200"/>
+		<s:Button label="View" click="viewButtonClickHandler(event)" enabled="{!isRequesting}"/>
+	</s:HGroup>
+	
+	<s:Panel width="360" height="360" horizontalCenter="0" title="{formatter.format(user.createdAt)}" verticalCenter="0">
+		<s:Image x="10" y="10" width="48" height="48" smooth="true" source="{user.profileImageUrl}" toolTip="friends: {user.friendsCount}&#xd;followers: {user.followersCount}&#xd;listed: {user.listedCount}&#xd;description: {user.description}"/>
+		<s:VGroup x="66" y="10" width="282" height="82">
+			<s:Label maxWidth="282" fontSize="20" text="{user.screenName} ({user.location})"/>
+			<s:Label maxWidth="282" color="#888888" text="{user.name}"/>
+		</s:VGroup>
+		<s:Label left="10" right="10" top="100" bottom="30" fontSize="16" text="{user.latestTweet.text}"/>
+		<s:Label right="10" bottom="10" text="{formatter.format(user.latestTweet.createdAt)}"/>
+		<s:Label left="10" bottom="10" text="{user.latestTweet.retweetedCount} Retweets" visible="{user.latestTweet.isRetweeted}"/>
+	</s:Panel>
+</s:Application>
