@@ -83,7 +83,7 @@ package me.rkome.da.utils.metadata.mapping
 						{
 							nullableValue = String(xmlList[0].@value);
 						}
-						info.isArray = (nullableValue == 'yes');
+						info.isNullable = (nullableValue == 'yes');
 						
 						mappingTable[name] = info;
 					}
