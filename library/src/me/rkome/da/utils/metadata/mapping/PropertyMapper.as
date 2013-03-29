@@ -181,7 +181,7 @@ class PropertyInfo
 		{
 			if (properties[name] is Array && _isArray)
 			{
-				instance[_propertyName] = Array(properties[name]).map(generateByBuilder);
+				instance[_propertyName] = (properties[name] as Array).map(generateByBuilder);
 			}
 			else
 			{
@@ -193,7 +193,7 @@ class PropertyInfo
 		{
 			if (properties[name] is Array && _isArray)
 			{
-				instance[_propertyName] = Array(properties[name]).map(generateBySelector);
+				instance[_propertyName] = (properties[name] as Array).map(generateBySelector);
 			}
 			else
 			{
@@ -207,7 +207,7 @@ class PropertyInfo
 		{
 			if (properties[name] is Array && _isArray)
 			{
-				instance[_propertyName] = Array(properties[name]).map(generateByClass);
+				instance[_propertyName] = (properties[name] as Array).map(generateByClass);
 			}
 			else
 			{
@@ -229,7 +229,7 @@ class PropertyInfo
 	
 	private function generateByClass(item:Object, i:int, arr:Array):Object
 	{
-		gen = new ClassGenerator(_type);
+		gen.generator = _type;
 		gen.properties = item;
 		return gen.newInstance();
 	}
