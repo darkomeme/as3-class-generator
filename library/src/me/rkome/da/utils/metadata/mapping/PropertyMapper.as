@@ -184,6 +184,7 @@ class PropertyInfo
 				instance[_propertyName] = (properties[name] as Array).map(generateByBuilder);
 			}
 			else
+			if (properties[name] != null)
 			{
 				instance[_propertyName] = _builder.build(properties[name]);
 			}
@@ -196,6 +197,7 @@ class PropertyInfo
 				instance[_propertyName] = (properties[name] as Array).map(generateBySelector);
 			}
 			else
+			if (properties[name] != null)
 			{
 				gen.generator = _selector.selectClass(properties[name]);
 				gen.properties = properties[name];
@@ -210,6 +212,7 @@ class PropertyInfo
 				instance[_propertyName] = (properties[name] as Array).map(generateByClass);
 			}
 			else
+			if (properties[name] != null)
 			{
 				gen.generator = _type;
 				gen.properties = properties[name];
