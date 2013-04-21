@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<annotations version="1.0">
+	<metadata name="Mapping" description="ClassGenerator Mapping Tag" >
+	
+		<context name="variable" />
+		<context name="getter" />
+		<context name="setter" />
+		
+		<attribute name="name" type="String" />
+		<attribute name="type" type="Class" hint="classes" />
+		<attribute name="builder" type="Class" defaultValue="me.rkome.da.utils.metadata.mapping.IClassBuilder" hint="classes" hintType="me.rkome.da.utils.metadata.mapping.IClassBuilder"  />
+		<attribute name="selector" type="Class" defaultValue="me.rkome.da.utils.metadata.mapping.IClassSelector" hint="classes" hintType="me.rkome.da.utils.metadata.mapping.IClassSelector"  />
+		<attribute name="array" type="String" defaultValue="yes" values="yes,no" />
+		<attribute name="nullable" type="String" defaultValue="no" values="yes,no" />
+		<attribute name="option" type="String" />
+	</metadata>	
+</annotations>
