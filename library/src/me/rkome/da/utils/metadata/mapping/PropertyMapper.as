@@ -26,9 +26,9 @@ package me.rkome.da.utils.metadata.mapping
 						var name:String = String(metadata.arg.(@key == 'name')[0].@value);
 						var xmlList:XMLList;
 						var info:PropertyInfo;
-						if (mappingTable.hasOwnProperty(name))
+						if (mappingTable.hasOwnProperty(name) && mappingTable[name].hasOwnProperty(accessorName))
 						{
-							info = mappingTable[name] as PropertyInfo;
+							info = mappingTable[name][accessorName] as PropertyInfo;
 						}
 						else
 						{
@@ -85,7 +85,8 @@ package me.rkome.da.utils.metadata.mapping
 						}
 						info.isNullable = (nullableValue == 'yes');
 						
-						mappingTable[name] = info;
+						if (!mappingTable.hasOwnProperty(name)) mappingTable[name] = {};
+						mappingTable[name][accessorName] = info;
 					}
 				}
 			}
@@ -95,8 +96,11 @@ package me.rkome.da.utils.metadata.mapping
 		{
 			if (mappingTable.hasOwnProperty(name))
 			{
-				var info:PropertyInfo = mappingTable[name] as PropertyInfo;
-				info.setInstance(instance, name, properties);
+				for (var accessorName:String in mappingTable[name]) 
+				{
+					var info:PropertyInfo = mappingTable[name][accessorName] as PropertyInfo;
+					info.setInstance(instance, name, properties);
+				}
 			}
 			else
 			if (instance.hasOwnProperty(name))
