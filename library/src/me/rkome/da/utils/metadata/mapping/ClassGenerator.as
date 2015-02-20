@@ -10,6 +10,7 @@ package me.rkome.da.utils.metadata.mapping
 	public class ClassGenerator implements IFactory
 	{
 		private static var xmlCacheTable:Dictionary = new Dictionary();
+		private static var generatorCacheTable:Dictionary = new Dictionary();
 		
 		/**
 		 * 生成するクラスの登録を行う関数
@@ -36,7 +37,16 @@ package me.rkome.da.utils.metadata.mapping
 		 */		
 		public static function generate(ClassReference:Class, properties:Object):*
 		{
-			var gen:ClassGenerator = new ClassGenerator(ClassReference);
+			var gen:ClassGenerator;
+			if (generatorCacheTable[ClassReference] == undefined)
+			{
+				gen = new ClassGenerator(ClassReference);
+				generatorCacheTable[ClassReference] = gen;
+			}
+			else
+			{
+				gen = generatorCacheTable[ClassReference];
+			}
 			gen.properties = properties;
 			return gen.newInstance();
 		}

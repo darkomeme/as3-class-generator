@@ -1,8 +1,6 @@
 package me.rkome.da.utils.metadata.mapping
 {
 	import flash.utils.getDefinitionByName;
-	
-	import mx.messaging.AbstractConsumer;
 
 	public class PropertyMapper
 	{
@@ -12,10 +10,17 @@ package me.rkome.da.utils.metadata.mapping
 			mappingTable = {};
 		}
 		
+		private var readonlyAccessor:Object = {};
 		public function loadMappingFromXML(xml:XML):void
 		{
 			for each (var accessor:XML in xml.accessor)
 			{
+				if (String(accessor.@access) == "readonly")
+				{
+					readonlyAccessor[String(accessor.@name)] = true;
+					continue;
+				}
+				
 				var xmlMappingTagList:XMLList = accessor.metadata.(@name == 'Mapping');
 				if (xmlMappingTagList.length() > 0)
 				{
@@ -99,11 +104,14 @@ package me.rkome.da.utils.metadata.mapping
 				for (var accessorName:String in mappingTable[name]) 
 				{
 					var info:PropertyInfo = mappingTable[name][accessorName] as PropertyInfo;
-					info.setInstance(instance, name, properties);
+					if (!readonlyAccessor.hasOwnProperty(info.propertyName))
+					{
+						info.setInstance(instance, name, properties);
+					}
 				}
 			}
 			else
-			if (instance.hasOwnProperty(name))
+			if (instance.hasOwnProperty(name) && !readonlyAccessor.hasOwnProperty(name))
 			{
 				instance[name] = properties[name];
 			}
